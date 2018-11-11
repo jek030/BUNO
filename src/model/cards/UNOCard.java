@@ -13,7 +13,7 @@
 *
 * ****************************************
  */
-package model;
+package model.cards;
 
 /**
  *
@@ -58,6 +58,16 @@ public class UNOCard {
      */
     public CardType getType() {
         return type;
+    }
+
+    /**
+     * Returns a nicely formatted string representing a card.
+     *
+     * @return a nicely formatted string representing a card.
+     */
+    @Override
+    public String toString() {
+        return "Card{" + "color=" + color + ", type=" + type + '}';
     }
 
 }
