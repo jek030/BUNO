@@ -60,9 +60,11 @@ public class UNOGameMain extends Application {
 
         this.theControl = new UNOGameController(theModel, theView);
 
-        Scene scene = new Scene(this.theView.getRootNode(), 800, 800);
+        Scene scene = new Scene(this.theView.getRootNode());
+   
         scene.getStylesheets().add(
                 getClass().getResource("stylesheet.css").toExternalForm());
+        
 
         primaryStage.setTitle("B-UNO");
         primaryStage.setScene(scene);

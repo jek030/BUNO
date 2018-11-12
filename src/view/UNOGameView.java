@@ -24,6 +24,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import model.cards.Deck;
 
 /**
  *
@@ -41,16 +42,19 @@ public class UNOGameView {
      */
     private final UNOGameModel theModel;
 
-    private HBox userHBox;
+    private HBox playersHand;
 
-    private VBox rightBox;
+    private VBox rightPanel;
 
     private Button UNOButton;
+    
+    private GridPane cardsInPlayersHand;
+    private GridPane opponents;
+    private GridPane decks;
+    
 
-    private VBox leftBox;
-
-    StackPane faceDown;
-    StackPane faceUp;
+    StackPane faceDownCard;
+    StackPane faceUpCard;
 
     /**
      * An explicit constructor for the UNO game view
@@ -59,50 +63,34 @@ public class UNOGameView {
      */
     public UNOGameView(UNOGameModel theModel) {
 
-        /**
-         * -----------------------------------------------------------------
-         * this.theModel = theModel; this.userHBox = userHBox; this.buttonBox =
-         * buttonBox; this.UNOButton = UNOButton;
-         *
-         * root = new BorderPane();
-         *
-         *
-         *
-         * createUNOButton();
-         *
-         * root.setBackground(new Background( // changes the background of the
-         * main panel new BackgroundFill(Color.LIGHTSEAGREEN, CornerRadii.EMPTY,
-         * Insets.EMPTY)));
-         *
-         * root.setRight(buttonBox); root.setBottom(userHBox);
-         * ----------------------------------------------------------------------
-         */
+ 
         this.theModel = theModel;
 
         root = new BorderPane();
         root.setId("rootNode");
 
-        userHBox = new HBox();
-        userHBox.setSpacing(100);
-        userHBox.setPadding(new Insets(10, 10, 10, 10));
+        playersHand = new HBox();
+        playersHand.setSpacing(100);
+        playersHand.setPadding(new Insets(10, 10, 10, 10));
 
-        GridPane handGrid = new GridPane();
-        handGrid.setHgap(20);
-        handGrid.setVgap(20);
-        handGrid.setPadding(new Insets(40));
+        cardsInPlayersHand = new GridPane();
+        cardsInPlayersHand.setHgap(20);
+        cardsInPlayersHand.setVgap(20);
+        cardsInPlayersHand.setPadding(new Insets(40));
 
-        //make list of cards, add each card to pane
-        //ArrayList<Rectangle> hand = new ArrayList<Rectangle>();
-        for (int i = 0; i <= 4; i++) {
-            faceUp = new StackPane();
-            handGrid.add(faceUp, i, 0);
-            faceUp.setPrefSize(128, 178);
-            faceUp.getStyleClass().add("card");
+        //make list of cards, add each card to pane, just pass future players hand of cards 
+        //  instead of hardcoding
+        
+        for (int i = 0; i <= 7; i++) {
+            faceUpCard = new StackPane();
+            cardsInPlayersHand.add(faceUpCard, i, 0);
+            faceUpCard.setPrefSize(128, 178);
+            faceUpCard.getStyleClass().add("card");
 
             //Set Inside of face
             VBox inside = new VBox();
             inside.getStyleClass().add("inside");
-            faceUp.getChildren().add(inside);
+            faceUpCard.getChildren().add(inside);
             StackPane.setMargin(inside, new Insets(5));
 
             String string = Integer.toString(i);
@@ -124,44 +112,66 @@ public class UNOGameView {
 
             inside.getChildren().addAll(top, middle, bottom);
         }
-        userHBox.getChildren().add(handGrid);
+        playersHand.getChildren().add(cardsInPlayersHand);
 
-        //creat the center player grid
-        GridPane centerGrid = new GridPane();
-        faceDown = new StackPane();
-        faceDown.setPrefSize(128, 178);
-        faceDown.getStyleClass().add("card");
-        centerGrid.setPadding(new Insets(20, 0, 0, 0));
-        centerGrid.add(faceDown, 0, 0);
-        centerGrid.setAlignment(Pos.TOP_CENTER);
+        
+        VBox opponentsAndDeck = new VBox();
+        opponentsAndDeck.setSpacing(100);
+        opponentsAndDeck.setPadding(new Insets(10, 10, 10, 10));
+        
+        //create the model of opponents
+        opponents = new GridPane();
+        opponents.setHgap(20);
+        opponents.setVgap(20);
+        opponents .setPadding(new Insets(20, 0, 0, 0));
+        opponents.setAlignment(Pos.TOP_CENTER);
+        
+        for(int i =0; i<=3; i++){
+            faceDownCard = new StackPane();
+        faceDownCard.setPrefSize(128, 178);
+        faceDownCard.getStyleClass().add("card");
+        opponents.add(faceDownCard, i, 0);
+            
+        }
+        
+        decks = new GridPane();
+        decks.setHgap(20);
+        decks.setVgap(20);
+        decks.setPadding(new Insets(40));
+        //create a card to represent the draw deck
+        StackPane  drawDeck = new StackPane();
+        drawDeck.setPrefSize(128, 178);
+        drawDeck.setMaxSize(128, 178);
+        drawDeck.getStyleClass().add("topCardOnDrawDeck");
+        //create a card to represent the discard deck
+        StackPane  discardDeck = new StackPane();
+        discardDeck.setPrefSize(128, 178);
+        discardDeck.setMaxSize(128, 178);
+        discardDeck.getStyleClass().add("topCardOnDiscardDeck");
+        decks.add(drawDeck, 0, 0);
+        decks.add(discardDeck, 1, 0);
+        decks.setAlignment(Pos.CENTER);
+        
+        opponentsAndDeck.getChildren().add(opponents);
+        opponentsAndDeck.getChildren().add(decks);
+        opponentsAndDeck.setAlignment(Pos.CENTER);
+        
+        
 
-        //create the right box that hold the button and right player
-        rightBox = new VBox();
-        rightBox.setPadding(new Insets(10, 50, 10, 10));
-        rightBox.setAlignment(Pos.CENTER);
-        rightBox.setSpacing(50);
+        //create the right box that hold the button
+        rightPanel = new VBox();
+        rightPanel.setPadding(new Insets(10, 50, 10, 10));
+        rightPanel.setAlignment(Pos.BOTTOM_RIGHT);
+        rightPanel.setSpacing(50);
         UNOButton = new Button();
         UNOButton.setText("B-UNO!");
         UNOButton.setPrefWidth(100);
-        faceDown = new StackPane();
-        faceDown.setPrefSize(128, 178);
-        faceDown.getStyleClass().add("card");
-        rightBox.getChildren().addAll(faceDown, UNOButton);
-
-        //create left player box
-        leftBox = new VBox();
-        leftBox.setPadding(new Insets(10, 50, 10, 10));
-        leftBox.setAlignment(Pos.CENTER);
-        leftBox.setSpacing(50);
-        faceDown = new StackPane();
-        faceDown.setPrefSize(128, 178);
-        faceDown.getStyleClass().add("card");
-        leftBox.getChildren().add(faceDown);
-
-        root.setLeft(leftBox);
-        root.setCenter(centerGrid);
-        root.setRight(rightBox);
-        root.setBottom(userHBox);
+        rightPanel.getChildren().add(UNOButton);
+       
+        
+        root.setCenter(opponentsAndDeck);
+        root.setRight(rightPanel);
+        root.setBottom(playersHand);
 
     }
 
@@ -175,11 +185,11 @@ public class UNOGameView {
     }
 
     public StackPane getFaceDown() {
-        return faceDown;
+        return faceDownCard;
     }
 
     public StackPane getFaceUp() {
-        return faceUp;
+        return faceUpCard;
     }
 
 }
